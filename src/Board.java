@@ -12,9 +12,8 @@ public class Board {
         // (where blocks[i][j] = block in row i, column j)
         if (blocks == null)
             throw new NullPointerException("Can't construct board from null array");
-        board = blocks.clone();
-        
-        N = blocks.length;
+        board = deepCopyIntMatrix(blocks);
+        N = board.length;
     }
                                            
     public int dimension()
@@ -69,7 +68,7 @@ public class Board {
         {
             for (int j = 0; j < N; j++)
             {
-                if (board[i][j] != i*N + j + 1 )
+                if (board[i][j] != 0 && board[i][j] != i*N + j + 1 )
                 {
                     return false;
                 }
@@ -200,7 +199,17 @@ public class Board {
         return sb.toString();
     }
     
-    private void swap(int [][] a, int row1, int col1, int row2, int col2)
+    private static int[][] deepCopyIntMatrix(int[][] input) {
+        if (input == null)
+            return null;
+        int[][] result = new int[input.length][];
+        for (int r = 0; r < input.length; r++) {
+            result[r] = input[r].clone();
+        }
+        return result;
+    }
+    
+    private static void swap(int [][] a, int row1, int col1, int row2, int col2)
     {
         int tmp = a[row1][col1];
         a[row1][col1] = a[row2][col2];
@@ -210,5 +219,23 @@ public class Board {
     public static void main(String[] args)
     {
         // unit tests (not graded)
+        //int[][] a = {{0, 1, 3} , {4, 2, 5} , {7, 8, 6}};
+        int[][] a = {{1, 2, 3} , {4, 5, 0} , {7, 8, 6}};
+        
+        Board tst = new Board(a);
+        
+        System.out.println("The Board is: ");
+        System.out.println(tst.toString());
+        
+        System.out.println("The twin is: ");
+        System.out.println(tst.twin());
+        
+        System.out.println("Neighbors are: ");
+        for(Board i : tst.neighbors())
+        {
+            if (i.isGoal())
+                System.out.println("GOOOOOOOOOOAAAAAAAAAAAAAAAAAL!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println(i);
+        }
     }
 }
