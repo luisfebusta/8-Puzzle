@@ -1,5 +1,5 @@
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 
 public class Board {
     
@@ -124,106 +124,61 @@ public class Board {
     
     public Iterable<Board> neighbors()
     {
+        ArrayList<Board> neighbors = new ArrayList<Board>();
         // all neighboring boards
+        int [][] tmp = board.clone();
         
-        return new NeighborIterator();
+        // need to find 0 in the board
+        int i = 0;
+        int j = 0;
+        
+        outerloop:
+        for (i = 0; i < N; i++)
+        {
+            for (j = 0; j < N; j++)
+            {
+                if (tmp[i][j] == 0)
+                    break outerloop;
+            }
+        }
+
+        if (i != 0)
+        {
+            // move 0 to previous row
+            swap(tmp, i, j, i - 1, j);
+            neighbors.add(new Board(tmp));
+            // move 0 back to original row
+            swap(tmp, i, j, i - 1, j);
+        }
+        
+        if (i != N - 1)
+        {
+            // move 0 to next row
+            swap(tmp, i, j, i + 1, j);
+            neighbors.add(new Board(tmp));
+            // move 0 back to original row
+            swap(tmp, i, j, i + 1, j);
+        }
+        
+        if(j != 0)
+        {
+            // move 0 to column to the left
+            swap(tmp, i, j, i, j - 1);
+            neighbors.add(new Board(tmp));
+            // move 0 back
+            swap(tmp, i, j, i, j - 1);
+        }
+        
+        if(j != N - 1)
+        {
+            // move 0 to the column to the right
+            swap(tmp, i, j, i, j + 1);
+            neighbors.add(new Board(tmp));
+            // move 0 back
+            swap(tmp, i, j, i, j + 1);
+        }
+        return neighbors;
     }  
-    
-    private class NeighborIterator implements Iterator<Board>
-    {
-        private Board [] neighbors;
-        private int current = 0;
-        
-        
-        public NeighborIterator()
-        {
-            int [][] tmp = board.clone();
-            
-            // need to find 0 in the board
-            int n = 2;          // there are at least 2 neighbors
-            int i = 0;
-            int j = 0;
-            
-            outerloop:
-            for (i = 0; i < N; i++)
-            {
-                for (j = 0; j < N; j++)
-                {
-                    if (tmp[i][j] == 0)
-                        break outerloop;
-                }
-            }
-            
-            if (i != 0 && i != N - 1)
-                n++;
-            if (j != 0 && j != N - 1)
-                n++;
-            
-            neighbors = new Board[n];
-            
-            n = 0;
-            
-            if (i != 0)
-            {
-                // move 0 to previous row
-                swap(tmp, i, j, i - 1, j);
-                neighbors[n++] = new Board(tmp);
-                // move 0 back to original row
-                swap(tmp, i, j, i - 1, j);
-            }
-            
-            if (i != N - 1)
-            {
-                // move 0 to next row
-                swap(tmp, i, j, i + 1, j);
-                neighbors[n++] = new Board(tmp);
-                // move 0 back to original row
-                swap(tmp, i, j, i + 1, j);
-            }
-            
-            if(j != 0)
-            {
-                // move 0 to column to the left
-                swap(tmp, i, j, i, j - 1);
-                neighbors[n++] = new Board(tmp);
-                // move 0 back
-                swap(tmp, i, j, i, j - 1);
-            }
-            
-            if(j != N - 1)
-            {
-                // move 0 to the column to the right
-                swap(tmp, i, j, i, j + 1);
-                neighbors[n++] = new Board(tmp);
-                // move 0 back
-                swap(tmp, i, j, i, j + 1);
-            }
-            
-                
-        }
-        @Override
-        public boolean hasNext() {
-            if (current < neighbors.length)
-                return true;
-            
-            return false;
-        }
-        @Override
-        public Board next() {
-            if (current >= neighbors.length)
-                return null;
-            
-            return neighbors[current++];
-        }
-        
-        private void swap(int [][] a, int row1, int col1, int row2, int col2)
-        {
-            int tmp = a[row1][col1];
-            a[row1][col1] = a[row2][col2];
-            a[row2][col2] = tmp;
-        }
-        
-    }
     
     public String toString()
     {
@@ -243,6 +198,13 @@ public class Board {
         }
         
         return sb.toString();
+    }
+    
+    private void swap(int [][] a, int row1, int col1, int row2, int col2)
+    {
+        int tmp = a[row1][col1];
+        a[row1][col1] = a[row2][col2];
+        a[row2][col2] = tmp;
     }
 
     public static void main(String[] args)
