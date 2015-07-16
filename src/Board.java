@@ -59,9 +59,14 @@ public class Board {
         {
             for (int j = 0; j < N; j++)
             {
+                if (tiles[i][j] == 0)
+                    continue;   
                 if (tiles[i][j] != i*N + j + 1 )
                 {
-                    manhattan += Math.abs(i*N + j + 1 - tiles[i][j]) ;
+                    //calculate right row and column
+                    int row = (tiles[i][j] - 1) / N;
+                    int col = (tiles[i][j] - 1) % N;
+                    manhattan += Math.abs(i-row) + Math.abs(j-col) ;
                 }
             }
         }
@@ -248,6 +253,8 @@ public class Board {
         
         System.out.println("The Board is: ");
         System.out.println(tst.toString());
+        
+        System.out.println("Manhattan: " + tst.manhattan());
         
         System.out.println("The twin is: ");
         System.out.println(tst.twin());

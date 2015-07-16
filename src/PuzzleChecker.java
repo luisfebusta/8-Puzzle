@@ -44,11 +44,16 @@ public class PuzzleChecker {
 
             // solve the slider puzzle
             Board initial = new Board(tiles);
+            
             Solver solver = new Solver(initial);
             if (solver.isSolvable())
             {
                 System.out.println(filename + ": " + solver.moves());
-                System.out.println("solution: \n" + solver.solution.board );
+              /*  System.out.println("solution: \n");
+                for (Board b : solver.solution())
+                {
+                    System.out.println(b);
+                }*/
             }
             else
             {

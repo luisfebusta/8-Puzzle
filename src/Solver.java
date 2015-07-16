@@ -8,9 +8,8 @@ public class Solver {
         
         MinPQ<SNode> pq = new MinPQ<SNode>();
         MinPQ<SNode> pq_twin = new MinPQ<SNode>();
-        int moves = 0;
-        SNode current = new SNode(initial,null,moves);
-        SNode current_twin = new SNode(initial.twin(),null,moves);
+        SNode current = new SNode(initial,null,0);
+        SNode current_twin = new SNode(initial.twin(),null,0);
         pq.insert(current);
         pq_twin.insert(current_twin);
         
@@ -35,7 +34,6 @@ public class Solver {
                 break;
             }
             
-            moves++;
             
             for (Board b : current.board.neighbors())
             {
@@ -43,7 +41,7 @@ public class Solver {
                 {
                     continue;
                 }
-                pq.insert(new SNode(b, current, moves));
+                pq.insert(new SNode(b, current, current.moves + 1));
             }
             
             for (Board b : current_twin.board.neighbors())
@@ -52,9 +50,11 @@ public class Solver {
                 {
                     continue;
                 }
-                pq_twin.insert(new SNode(b, current_twin, moves));
+                pq_twin.insert(new SNode(b, current_twin, current.moves + 1));
             }
         }
+        
+        
         
     }
     
