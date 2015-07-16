@@ -3,8 +3,12 @@ import java.util.Arrays;
 
 public class Board {
     
-    private int [][] board;
+    private int [][] tiles;
     private int N;
+    private int hamming;
+    private int manhattan;
+    private boolean hamming_set;
+    private boolean manhattan_set;
     
     public Board(int[][] blocks)
     {
@@ -12,8 +16,8 @@ public class Board {
         // (where blocks[i][j] = block in row i, column j)
         if (blocks == null)
             throw new NullPointerException("Can't construct board from null array");
-        board = deepCopyIntMatrix(blocks);
-        N = board.length;
+        tiles = deepCopyIntMatrix(blocks);
+        N = tiles.length;
     }
                                            
     public int dimension()
@@ -25,39 +29,43 @@ public class Board {
     public int hamming()
     {
         // number of blocks out of place
+        if (hamming_set)
+            return hamming;
         
-        int hamming = 0;
+        hamming = 0;
         
         for (int i = 0; i < N; i++)
         {
             for (int j = 0; j < N; j++)
             {
-                if (board[i][j] != i*N + j + 1 )
+                if (tiles[i][j] != i*N + j + 1 )
                 {
                     hamming++;
                 }
             }
         }
-        
+        hamming_set = true;
         return hamming;
     }
     
     public int manhattan()
     {
         // sum of Manhattan distances between blocks and goal
-        int manhattan = 0;
+        if (manhattan_set)
+            return manhattan;
+        manhattan = 0;
         
         for (int i = 0; i < N; i++)
         {
             for (int j = 0; j < N; j++)
             {
-                if (board[i][j] != i*N + j + 1 )
+                if (tiles[i][j] != i*N + j + 1 )
                 {
-                    manhattan += Math.abs(i*N + j + 1 - board[i][j]) ;
+                    manhattan += Math.abs(i*N + j + 1 - tiles[i][j]) ;
                 }
             }
         }
-        
+        manhattan_set = true;
         return manhattan;
     }
     
@@ -68,7 +76,7 @@ public class Board {
         {
             for (int j = 0; j < N; j++)
             {
-                if (board[i][j] != 0 && board[i][j] != i*N + j + 1 )
+                if (tiles[i][j] != 0 && tiles[i][j] != i*N + j + 1 )
                 {
                     return false;
                 }
@@ -87,23 +95,23 @@ public class Board {
         // try swapping first 2 positions on row 1 or row 2
         
         int row = 1;
-        if (board[0][0] != 0 && board[0][1] != 0)
+        if (tiles[0][0] != 0 && tiles[0][1] != 0)
         {
             row = 0;
         }
         
         // temporarily swap two adjacent blocks;
-        int tmp0 = board[row][0];
-        int tmp1 = board[row][1];
-        board[row][0] = tmp1;
-        board[row][1] = tmp0;
+        int tmp0 = tiles[row][0];
+        int tmp1 = tiles[row][1];
+        tiles[row][0] = tmp1;
+        tiles[row][1] = tmp0;
         
         // create new board with the two swapped blocks;
-        Board twin = new Board(board);
+        Board twin = new Board(tiles);
         
         // return board to it's original state
-        board[row][0] = tmp0;
-        board[row][1] = tmp1;
+        tiles[row][0] = tmp0;
+        tiles[row][1] = tmp1;
         
         return twin;
     }
@@ -111,12 +119,11 @@ public class Board {
     public boolean equals(Object y)
     {
         // does this board equal y?
-        
+         if (y == null) return false;
         if (y == this) return true;
-        if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
-        if (!Arrays.deepEquals(this.board, that.board)) return false;
+        if (!Arrays.deepEquals(this.tiles, that.tiles)) return false;
         
         return true;       
     }
@@ -125,7 +132,7 @@ public class Board {
     {
         ArrayList<Board> neighbors = new ArrayList<Board>();
         // all neighboring boards
-        int [][] tmp = board.clone();
+        int [][] tmp = tiles.clone();
         
         // need to find 0 in the board
         int i = 0;
@@ -179,9 +186,24 @@ public class Board {
         return neighbors;
     }  
     
-    public String toString()
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append(N + "\n");
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                s.append(String.format("%2d ", tiles[i][j]));
+            }
+            s.append("\n");
+        }
+        return s.toString();
+    }
+    
+   /* public String toString()
     {
         // string representation of this board (in the output format specified below)
+        
+        
+        int width = Integer.toString(N*N).length();
         
         StringBuilder sb = new StringBuilder();
         
@@ -190,14 +212,14 @@ public class Board {
             for (int j = 0; j < N; j++)
             {
                 sb.append(" ");
-                sb.append(board[i][j]);
+                sb.append(String.format("%" + width + "d",board[i][j]));
                 sb.append(" ");
             }
             sb.append("\n");
         }
         
         return sb.toString();
-    }
+    }*/
     
     private static int[][] deepCopyIntMatrix(int[][] input) {
         if (input == null)

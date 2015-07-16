@@ -45,7 +45,15 @@ public class PuzzleChecker {
             // solve the slider puzzle
             Board initial = new Board(tiles);
             Solver solver = new Solver(initial);
-            System.out.println(filename + ": " + solver.moves());
+            if (solver.isSolvable())
+            {
+                System.out.println(filename + ": " + solver.moves());
+                System.out.println("solution: \n" + solver.solution.board );
+            }
+            else
+            {
+                System.out.println(filename + ": is unsolvable");
+            }
         }
     }
 }
