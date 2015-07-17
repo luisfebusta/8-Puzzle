@@ -1,34 +1,34 @@
 public class Solver {
     
-    SNode solution;
+    private SNode solution;
     
     public Solver(Board initial)
     {
         // find a solution to the initial board (using the A* algorithm)
         
         MinPQ<SNode> pq = new MinPQ<SNode>();
-        MinPQ<SNode> pq_twin = new MinPQ<SNode>();
-        SNode current = new SNode(initial,null,0);
-        SNode current_twin = new SNode(initial.twin(),null,0);
+        MinPQ<SNode> pqTwin = new MinPQ<SNode>();
+        SNode current = new SNode(initial, null, 0);
+        SNode currentTwin = new SNode(initial.twin(), null, 0);
         pq.insert(current);
-        pq_twin.insert(current_twin);
+        pqTwin.insert(currentTwin);
         
         //implement A* algorithm
         //Pull min Node from pq and insert it's neighbors.
         
         boolean solved = false;
         
-        while(!solved)
+        while (!solved)
         {
             current = pq.delMin();
-            current_twin = pq_twin.delMin();
+            currentTwin = pqTwin.delMin();
             
             if (current.board.isGoal())
             {
                 solution = current;
                 break;
             }
-            if (current_twin.board.isGoal())
+            if (currentTwin.board.isGoal())
             {
                 solution = null;
                 break;
@@ -44,13 +44,13 @@ public class Solver {
                 pq.insert(new SNode(b, current, current.moves + 1));
             }
             
-            for (Board b : current_twin.board.neighbors())
+            for (Board b : currentTwin.board.neighbors())
             {
-                if (current_twin.prev != null && b.equals(current_twin.prev.board))
+                if (currentTwin.prev != null && b.equals(currentTwin.prev.board))
                 {
                     continue;
                 }
-                pq_twin.insert(new SNode(b, current_twin, current.moves + 1));
+                pqTwin.insert(new SNode(b, currentTwin, current.moves + 1));
             }
         }
         
@@ -90,8 +90,9 @@ public class Solver {
         return st;
     }
     
-    class SNode implements Comparable<SNode>{
-        Board board;
+    private class SNode implements Comparable<SNode>
+    {
+        private Board board;
         private SNode prev;
         private int priority;
         private int moves;

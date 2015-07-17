@@ -7,8 +7,8 @@ public class Board {
     private int N;
     private int hamming;
     private int manhattan;
-    private boolean hamming_set;
-    private boolean manhattan_set;
+    private boolean hammingFlag;
+    private boolean manhattanFlag;
     
     public Board(int[][] blocks)
     {
@@ -29,7 +29,7 @@ public class Board {
     public int hamming()
     {
         // number of blocks out of place
-        if (hamming_set)
+        if (hammingFlag)
             return hamming;
         
         hamming = 0;
@@ -38,20 +38,20 @@ public class Board {
         {
             for (int j = 0; j < N; j++)
             {
-                if (tiles[i][j] != i*N + j + 1 )
+                if (tiles[i][j] != i*N + j + 1)
                 {
                     hamming++;
                 }
             }
         }
-        hamming_set = true;
+        hammingFlag = true;
         return hamming;
     }
     
     public int manhattan()
     {
         // sum of Manhattan distances between blocks and goal
-        if (manhattan_set)
+        if (manhattanFlag)
             return manhattan;
         manhattan = 0;
         
@@ -61,16 +61,16 @@ public class Board {
             {
                 if (tiles[i][j] == 0)
                     continue;   
-                if (tiles[i][j] != i*N + j + 1 )
+                if (tiles[i][j] != i*N + j + 1)
                 {
                     //calculate right row and column
                     int row = (tiles[i][j] - 1) / N;
                     int col = (tiles[i][j] - 1) % N;
-                    manhattan += Math.abs(i-row) + Math.abs(j-col) ;
+                    manhattan += Math.abs(i-row) + Math.abs(j-col);
                 }
             }
         }
-        manhattan_set = true;
+        manhattanFlag = true;
         return manhattan;
     }
     
@@ -81,7 +81,7 @@ public class Board {
         {
             for (int j = 0; j < N; j++)
             {
-                if (tiles[i][j] != 0 && tiles[i][j] != i*N + j + 1 )
+                if (tiles[i][j] != 0 && tiles[i][j] != i*N + j + 1)
                 {
                     return false;
                 }
@@ -91,32 +91,28 @@ public class Board {
         return true;
     }
     
-    public synchronized Board twin()
+    public Board twin()
     {
-        // a board that is obtained by exchanging two adjacent blocks in the same row
-        // method is synchronized since it temporarily modifies the underlying board to avoid
-        // having to duplicate the board array.
+        //a board that is obtained by exchanging two adjacent blocks in the same row
+        // method is synchronized since it temporarily modifies the underlying board
+        // to avoid having to duplicate the board array.
         
         // try swapping first 2 positions on row 1 or row 2
-        
+        int [][] tmpTiles = deepCopyIntMatrix(tiles);
         int row = 1;
-        if (tiles[0][0] != 0 && tiles[0][1] != 0)
+        if (tmpTiles[0][0] != 0 && tmpTiles[0][1] != 0)
         {
             row = 0;
         }
         
         // temporarily swap two adjacent blocks;
-        int tmp0 = tiles[row][0];
-        int tmp1 = tiles[row][1];
-        tiles[row][0] = tmp1;
-        tiles[row][1] = tmp0;
+        int tmp0 = tmpTiles[row][0];
+        int tmp1 = tmpTiles[row][1];
+        tmpTiles[row][0] = tmp1;
+        tmpTiles[row][1] = tmp0;
         
         // create new board with the two swapped blocks;
-        Board twin = new Board(tiles);
-        
-        // return board to it's original state
-        tiles[row][0] = tmp0;
-        tiles[row][1] = tmp1;
+        Board twin = new Board(tmpTiles);
         
         return twin;
     }
@@ -171,7 +167,7 @@ public class Board {
             swap(tmp, i, j, i + 1, j);
         }
         
-        if(j != 0)
+        if (j != 0)
         {
             // move 0 to column to the left
             swap(tmp, i, j, i, j - 1);
@@ -180,7 +176,7 @@ public class Board {
             swap(tmp, i, j, i, j - 1);
         }
         
-        if(j != N - 1)
+        if (j != N - 1)
         {
             // move 0 to the column to the right
             swap(tmp, i, j, i, j + 1);
@@ -260,10 +256,10 @@ public class Board {
         System.out.println(tst.twin());
         
         System.out.println("Neighbors are: ");
-        for(Board i : tst.neighbors())
+        for (Board i : tst.neighbors())
         {
             if (i.isGoal())
-                System.out.println("GOOOOOOOOOOAAAAAAAAAAAAAAAAAL!!!!!!!!!!!!!!!!!!!!!");
+                System.out.println("GOAL!!!!!!!!!!!!!!!!!!!!!");
             System.out.println(i);
         }
     }
