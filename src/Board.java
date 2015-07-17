@@ -40,7 +40,8 @@ public class Board {
             {
                 if (tiles[i][j] != i*N + j + 1)
                 {
-                    hamming++;
+                    if (tiles[i][j] != 0)
+                        hamming++;
                 }
             }
         }
